@@ -23,4 +23,14 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(exceptionRes, HttpStatus.CONFLICT); //status code 409
     }
+
+    @ExceptionHandler(ResourceNotfoundException.class)
+    public ResponseEntity<ApiResponse> handleNotfoundException(ResourceNotfoundException e) {
+        ApiResponse exceptionRes = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                null);
+        return new ResponseEntity<>(exceptionRes, HttpStatus.NOT_FOUND); // status code 404
+    }
 }

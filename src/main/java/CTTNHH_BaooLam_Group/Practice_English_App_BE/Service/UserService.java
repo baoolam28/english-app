@@ -17,7 +17,7 @@ public class UserService {
 
     public UserSignResponse createUser(UserSignRequest userSignRequest) {
 
-        String existedUser = userRepository.findByUsername(userSignRequest.getUsername());
+        User existedUser = userRepository.findByUsername(userSignRequest.getUsername());
         if(existedUser != null){
             throw new ResourceAlreadyExistsException("Username already exists!");
         }

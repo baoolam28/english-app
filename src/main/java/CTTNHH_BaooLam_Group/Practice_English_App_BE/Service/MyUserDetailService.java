@@ -1,17 +1,31 @@
 package CTTNHH_BaooLam_Group.Practice_English_App_BE.Service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import CTTNHH_BaooLam_Group.Practice_English_App_BE.Entity.User;
+import CTTNHH_BaooLam_Group.Practice_English_App_BE.Entity.UserPrincipal;
+import CTTNHH_BaooLam_Group.Practice_English_App_BE.Repository.UserRepository;
+
 @Service
 public class MyUserDetailService implements UserDetailsService{
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
+
+        User user = userRepository.findByUsername(username);
+        
+        if (user == null) {
+            throw new UsernameNotFoundException("User " + username + " not found");
+        }
+        
+        return new UserPrincipal(user);
     }
     
 }

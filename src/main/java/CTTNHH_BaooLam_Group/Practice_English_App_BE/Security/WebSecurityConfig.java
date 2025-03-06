@@ -1,7 +1,6 @@
 package CTTNHH_BaooLam_Group.Practice_English_App_BE.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Authentication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,20 +16,21 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import CTTNHH_BaooLam_Group.Practice_English_App_BE.Service.MyUserDetailService;
 
 
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-
+    
     @Autowired
-    private UserDetailsService userDetailsService;
+    private MyUserDetailService userDetailService;
 
     @SuppressWarnings({ "removal", "deprecation" })
     @Bean
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception{
-
+        
         http
             .csrf(customizer -> customizer.disable())
             .authorizeRequests(request -> request.anyRequest().authenticated())
@@ -47,20 +47,32 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
-        provider.setUserDetailsService(userDetailsService);
+        provider.setUserDetailsService(userDetailService);
+        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());// NoopPasswordEncoder.getInstance() for using in testing
             return provider;
 
-    }
+    } 
 
     @Bean
     public UserDetailsService userDetailsService(){
-        @SuppressWarnings("deprecation")
+
         UserDetails user1 = User.withDefaultPasswordEncoder()
                                 .username("baoolam")
                                 .password("123")
-                                .roles("USER")
+                                .roles("ADMIN")
                                 .build();
-        return new InMemoryUserDetailsManager(user1); 
+
+
+        UserDetails user2 = User.withDefaultPasswordEncoder()
+                .username("baolam")
+                .password("123")
+                .roles("USER")
+                .build();
+        return new InMemoryUserDetailsManager(user1,user2); 
     }
+
+    // @Bean
+    // PasswordEncoder passwordEncode(){
+    //     return new BCryptPasswordEncoder();
+    // }
 }
